@@ -2,13 +2,12 @@ package routes
 
 import (
 	"github.com/DraftTin/URLShortener-go-fiber-redis/api/database"
-	"github.com/go-redis/redis"
-	"github.com/go-redis/redis/v8"
 	"github.com/gofiber/fiber/v2"
+	"github.com/redis/go-redis/v9"
 )
 
 func ResolveURL(c *fiber.Ctx) error {
-	url := c.Param("url")
+	url := c.Params("url")
 
 	r := database.CreateClient(0)
 	defer r.Close()
@@ -22,5 +21,8 @@ func ResolveURL(c *fiber.Ctx) error {
 
 	rInr := database.CreateClient(1)
 	defer rInr.Close()
+
+	_ = rInr.Incr(database.Ctx, "counter")
+	return c.Redirect(value, 301)
 
 }

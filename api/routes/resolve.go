@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"github.com/DraftTin/URLShortener-go-fiber-redis/api/database"
+	"github.com/DraftTin/URLShortener-go-fiber-redis/database"
 	"github.com/gofiber/fiber/v2"
 	"github.com/redis/go-redis/v9"
 )
@@ -24,5 +24,4 @@ func ResolveURL(c *fiber.Ctx) error {
 
 	_ = rInr.Incr(database.Ctx, "counter")
 	return c.Redirect(value, 301)
-
 }

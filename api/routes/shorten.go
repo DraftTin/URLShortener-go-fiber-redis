@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"fmt"
 	"os"
 	"strconv"
 	"time"
@@ -20,15 +21,16 @@ type request struct {
 }
 
 type response struct {
-	URL            string        `json:"url"`
-	CustomShort    string        `json:"short"`
-	Expiry         time.Duration `json:"expiry"`
-	XRateRemaining int           `json:"rate_limit"`
-	XRateLimitRest time.Duration `json:"rate_limit_reset"`
+	URL             string        `json:"url"`
+	CustomShort     string        `json:"short"`
+	Expiry          time.Duration `json:"expiry"`
+	XRateRemaining  int           `json:"rate_limit"`
+	XRateLimitReset time.Duration `json:"rate_limit_reset"`
 }
 
 func ShortenURL(c *fiber.Ctx) error {
 	body := new(request)
+	fmt.Println(1)
 	if err := c.BodyParser(&body); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "cannot parse JSON"})
 	}
@@ -53,6 +55,7 @@ func ShortenURL(c *fiber.Ctx) error {
 
 	// check if it's an actual url
 
+	fmt.Println(2)
 	if !govalidator.IsURL(body.URL) {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid URL"})
 	}
@@ -100,11 +103,11 @@ func ShortenURL(c *fiber.Ctx) error {
 	ttl, _ := client1.TTL(database.Ctx, c.IP()).Result()
 	ttl = ttl / time.Minute
 	resp := response{
-		URL:            body.URL,
-		CustomShort:    os.Getenv("DOMAIN") + "/" + id,
-		Expiry:         body.Expiry,
-		XRateRemaining: rateRemaining,
-		XRateLimitRest: ttl,
+		URL:             body.URL,
+		CustomShort:     os.Getenv("DOMAIN") + "/" + id,
+		Expiry:          body.Expiry,
+		XRateRemaining:  rateRemaining,
+		XRateLimitReset: ttl,
 	}
 	return c.Status(fiber.StatusOK).JSON(resp)
 }

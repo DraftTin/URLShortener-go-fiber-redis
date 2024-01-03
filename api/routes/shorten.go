@@ -1,7 +1,6 @@
 package routes
 
 import (
-	"fmt"
 	"os"
 	"strconv"
 	"time"
@@ -30,7 +29,6 @@ type response struct {
 
 func ShortenURL(c *fiber.Ctx) error {
 	body := new(request)
-	fmt.Println(1)
 	if err := c.BodyParser(&body); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "cannot parse JSON"})
 	}
@@ -55,7 +53,6 @@ func ShortenURL(c *fiber.Ctx) error {
 
 	// check if it's an actual url
 
-	fmt.Println(2)
 	if !govalidator.IsURL(body.URL) {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid URL"})
 	}

@@ -34,7 +34,6 @@ func ShortenURL(c *fiber.Ctx) error {
 	}
 
 	// implement rate limiting
-
 	client1 := database.CreateClient(1)
 	defer client1.Close()
 	val, err := client1.Get(database.Ctx, c.IP()).Result()
@@ -52,7 +51,6 @@ func ShortenURL(c *fiber.Ctx) error {
 	}
 
 	// check if it's an actual url
-
 	if !govalidator.IsURL(body.URL) {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid URL"})
 	}
